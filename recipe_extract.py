@@ -21,6 +21,13 @@ class Recipe:
     def ingredients(self):
         return self._ingredients
 
+    def __str__(self):
+        return (
+            f'Name: {self._name}\n'
+            f'Culture: {self._culture}\n'
+            f'Instructions: {self._instructions}\n'
+            f'Ingredients: {', '.join(self._ingredients)}'
+        )
 def call_api(link):
     response=requests.get(link)
     if response.status_code==200:
@@ -30,8 +37,10 @@ def call_api(link):
         print('ERROR AHHH')
 def make_recipes(recipes):
     recipe_list=[]
+    if recipes['meals'] is None:
+        return recipe_list
     for meal in recipes['meals']:
-        ingredients_list=merge_measurements_ingredients(extract_ingredients(meal), extract_measurements(meal))
+        ingredients_list=extract_ingredients_and_measurements(meal)
         r=Recipe(extract_name(meal), extract_culture(meal), extract_instructions(meal), ingredients_list)
         recipe_list.append(r)
     return recipe_list
@@ -46,31 +55,18 @@ def extract_culture(recipe_dict):
 def extract_instructions(recipe_dict):
     return recipe_dict['strInstructions']
 
-def extract_ingredients(recipe_dict):
-    ingredients_list=[]
-    for key in recipe_dict.keys():
-        if key.startswith('strIngredient') and recipe_dict[key]!=''and recipe_dict[key] and recipe_dict[key]!=' ':
-            ingredients_list.append(recipe_dict[key])
-    print(len(ingredients_list))
-    return ingredients_list
 
-def extract_measurements(recipe_dict):
-    measurements_list=[]
-    for key in recipe_dict.keys():
-        if key.startswith('strMeasure') and recipe_dict[key]!='' and recipe_dict[key] and recipe_dict[key]!=' ':
-            measurements_list.append(recipe_dict[key])
-    print(len(measurements_list))
-    return measurements_list
+def extract_ingredients_and_measurements(recipe_dict):
+    merged_list = []
+    for i in range(1, 21):
+        ingredient = recipe_dict.get(f"strIngredient{i}")
+        measurement = recipe_dict.get(f"strMeasure{i}")
 
-def merge_measurements_ingredients(ingredients_list, measurements_list):
-    merged_list=[]
-    count=0
-    #add a check for if the lengths arent the same later
-    list_lengths=len(ingredients_list)
-    while count<list_lengths:
-        merged_list.append(measurements_list[count]+ ' '+ ingredients_list[count])
-        #problem: it doesnt add inches. or certain measurements and im sad
-        count+=1
+        if ingredient and ingredient.strip():
+            if measurement and measurement.strip():
+                merged_list.append(f"{measurement.strip()} {ingredient.strip()}")
+            else:
+                merged_list.append(ingredient.strip())
     return merged_list
 
 def make_url(base):
@@ -82,3 +78,4 @@ def make_url(base):
         url_list.append(base+alphabet[count])
         count+=1
     return url_list
+
