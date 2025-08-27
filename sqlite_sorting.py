@@ -1,10 +1,9 @@
 import sqlite3
 
-def make_database():
-    #connect to database
-    connection= sqlite3.connect("recipes.db")
-    #create cursor
-    cursor=connection.cursor()
+
+
+
+def make_database(connection, cursor):
     #create table
     cursor.execute('''CREATE TABLE IF NOT EXISTS recipes(
         name TEXT PRIMARY KEY, 
@@ -15,3 +14,12 @@ def make_database():
     connection.commit()
     #close connection
     connection.close()
+
+
+def insert_data(recipe_list, cursor, connection):
+    for recipe in recipe_list:
+        cursor.execute(
+            'INSERT INTO recipes (name, culture, instructions, ingredients) VALUES (?, ?, ?, ?)',
+            (recipe.name(), recipe.culture(), recipe.instructions(), ", ".join(recipe.ingredients()))
+        )
+    connection.commit()

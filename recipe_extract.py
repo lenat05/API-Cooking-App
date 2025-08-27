@@ -34,7 +34,7 @@ def call_api(link):
         data=response.json()
         return data
     else:
-        print('ERROR AHHH')
+        print('ERROR')
 def make_recipes(recipes):
     recipe_list=[]
     if recipes['meals'] is None:
