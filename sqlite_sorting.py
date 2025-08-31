@@ -13,7 +13,6 @@ def make_database(connection, cursor):
     #save changes
     connection.commit()
     #close connection
-    connection.close()
 
 
 def insert_data(recipe_list, cursor, connection):
@@ -23,3 +22,10 @@ def insert_data(recipe_list, cursor, connection):
             (recipe.name(), recipe.culture(), recipe.instructions(), ", ".join(recipe.ingredients()))
         )
     connection.commit()
+
+def search_by_name(name, cursor, connection):
+    cursor.execute(
+        'SELECT * FROM recipes WHERE name= ?, (name)'
+    )
+    return cursor.fetchall()
+
