@@ -22,15 +22,15 @@ def delete_database():
         print("Database file not found.")
 
 def main():
+    # connect to database
+    conn = sqlite3.connect("recipes.db")
+    # create cursor
+    curs = conn.cursor()
     if not os.path.exists("recipes.db"):
-        # connect to database
-        conn = sqlite3.connect("recipes.db")
-        # create cursor
-        curs = conn.cursor()
         create_database(conn, curs)
         conn.close()
     else:
-        print('yay database')
+        print('yay')
 
 if __name__ == "__main__":
     main()

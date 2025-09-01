@@ -23,9 +23,20 @@ def insert_data(recipe_list, cursor, connection):
         )
     connection.commit()
 
-def search_by_name(name, cursor, connection):
+def search_by_name(name, connection, cursor):
     cursor.execute(
-        'SELECT * FROM recipes WHERE name= ?, (name)'
+        'SELECT * FROM recipes WHERE name= ?', (name,)
     )
     return cursor.fetchall()
 
+def search_by_ingredients(ingredient, connection, cursor):
+    cursor.execute(
+        'SELECT * FROM recipes WHERE instr(LOWER(ingredients), LOWER(?))>0', (ingredient,)
+    )
+    return cursor.fetchall()
+
+def search_by_cultures(culture, connection, cursor):
+    cursor.execute(
+        'SELECT * FROM recipes WHERE culture= ?', (culture,)
+    )
+    return cursor.fetchall()
