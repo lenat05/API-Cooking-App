@@ -40,3 +40,8 @@ def search_by_cultures(culture, connection, cursor):
         'SELECT * FROM recipes WHERE culture= ?', (culture,)
     )
     return cursor.fetchall()
+
+def sort_alphabetically(connection, cursor):
+    cursor.execute(
+        'SELECT * FROM recipes ORDER BY name ASC'
+    )
